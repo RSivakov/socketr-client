@@ -1,6 +1,7 @@
 <?php namespace Agwood\SocketrClient;
 
 use Illuminate\Support\ServiceProvider;
+use Agwood\SocketrClient\SocketrClient;
 
 class SocketrClientServiceProvider extends ServiceProvider {
 
@@ -9,7 +10,7 @@ class SocketrClientServiceProvider extends ServiceProvider {
 	 *
 	 * @var bool
 	 */
-	protected $defer = false;
+	protected $defer = true;
 
 	/**
 	 * Register the service provider.
@@ -18,7 +19,16 @@ class SocketrClientServiceProvider extends ServiceProvider {
 	 */
 	public function register()
 	{
-		//
+
+    $this->app->bind('agwood::socketr-client',function(){
+
+      $SocketrClient = new SocketrClient(new \ZMQContext());
+      $SocketrClient->connect('tcp://localhost:5555');
+
+      return $SocketrClient;
+
+    });
+
 	}
 
 	/**
@@ -28,7 +38,7 @@ class SocketrClientServiceProvider extends ServiceProvider {
 	 */
 	public function provides()
 	{
-		return array();
+		return array('agwood::socketr-client');
 	}
 
 }
